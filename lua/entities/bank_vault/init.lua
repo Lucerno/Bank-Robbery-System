@@ -240,3 +240,33 @@ concommand.Add("banksave", function(ply)
 	    DarkRP.notify(ply, 1, 5, "You don't have permission to execute this command.")
 	end
 end)
+
+
+concommand.Add("bankrespawn", function(ply)
+    if ply:IsSuperAdmin() then
+		local map = game.GetMap()
+	
+		if file.Exists("bankrs/"..map..".txt", "DATA") then
+			local positions = util.JSONToTable(file.Read("bankrs/"..map..".txt", "DATA"))
+
+			for k, v in pairs(positions) do
+				local bank = ents.Create("bank_vault")
+	        
+				bank:SetPos(v.pos)
+				bank:SetAngles(v.ang)
+				bank:Spawn()
+			end
+		
+			MsgN("[BankRS]: Loaded "..#positions.." positions for "..map)
+		else
+			MsgN("[BankRS]: Missing save files for "..map)
+		end
+    else
+	    DarkRP.notify(ply, 1, 5, "You don't have permission to execute this command.")
+	end
+end)
+
+local function respawnvaultoncleanup()
+	print( "Initialization hook called" )
+end
+hook.Add( "PostCleanupMap", "respawnvaultoncleanupcool", respawnvaultoncleanup )
